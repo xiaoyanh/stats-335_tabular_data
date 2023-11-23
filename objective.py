@@ -38,7 +38,7 @@ class Objective(BaseObjective):
     # Bump it up if the benchmark depends on a new feature of benchopt.
     min_benchopt_version = "1.5"
 
-    def set_data(self, X, y, preprocessor):
+    def set_data(self, X, y, preprocessor=None):
         """Set the data to be used to evaluate the ML algorithms.
 
         Parameters

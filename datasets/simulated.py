@@ -46,4 +46,5 @@ class Dataset(BaseDataset):
         return dict(
             X=X,
             y=y,
+            preprocessor=None
         )

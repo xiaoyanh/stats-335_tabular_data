@@ -40,10 +40,11 @@ class Dataset(BaseDataset):
             construct a `sklearn.Pipeline`.
         """
         dataset = openml.datasets.get_dataset(
-            self.dataset
+            self.dataset, download_data=True, download_qualities=False,
+            download_features_meta_data=True
         )
         X, y, cat_indicator, attribute_names = dataset.get_data(
-            dataset_format="array", target=dataset.default_target_attribute
+            dataset_format="dataframe", target=dataset.default_target_attribute
         )
 
         # Create a preprocessor that will one-hot encode categorical variables.
@@ -53,9 +54,9 @@ class Dataset(BaseDataset):
         preprocessor = ColumnTransformer(
             [
                 ("one_hot", OHE(categories="auto", handle_unknown="ignore"),
-                 [i for i in range(size) if cat_indicator[i]]),
+                 [X.columns[i] for i in range(size) if cat_indicator[i]]),
                 ("numerical", "passthrough",
-                 [i for i in range(size) if not cat_indicator[i]],)
+                 [X.columns[i] for i in range(size) if not cat_indicator[i]],)
             ]
         )
 

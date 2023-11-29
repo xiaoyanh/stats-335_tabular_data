@@ -7,8 +7,8 @@ with safe_import_context() as import_ctx:
     from sklearn.dummy import DummyClassifier
     from sklearn.pipeline import make_pipeline
     from sklearn.model_selection import train_test_split
-    from sklearn.metrics import balanced_accuracy_score as BAS
-    from sklearn.metrics import roc_auc_score as RAS
+    from sklearn.metrics import balanced_accuracy_score
+    from sklearn.metrics import roc_auc_score
     import numpy as np
 
 
@@ -87,12 +87,12 @@ class Objective(BaseObjective):
         score_train = model.score(self.X_train, self.y_train)
         score_val = model.score(self.X_val, self.y_val)
         score_test = model.score(self.X_test, self.y_test)
-        bl_acc = BAS(self.y_test, model.predict(self.X_test))
+        bl_acc = balanced_accuracy_score(self.y_test, model.predict(self.X_test))
         pred = model.predict_proba(self.X_test)
         if len(np.unique(self.y_test)) > 2:
-            roc_score = RAS(self.y_test, pred, multi_class='ovr')
+            roc_score = roc_auc_score(self.y_test, pred, multi_class='ovr')
         else:
-            roc_score = RAS(self.y_test, pred[:, 1])
+            roc_score = roc_auc_score(self.y_test, pred[:, 1])
 
         # This method can return many metrics in a dictionary. One of these
         # metrics needs to be `value` for convergence detection purposes.

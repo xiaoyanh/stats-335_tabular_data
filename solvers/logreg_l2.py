@@ -16,6 +16,9 @@ class Solver(BaseSolver):
     # Name to select the solver in the CLI and to display the results.
     name = 'logreg_l2'
 
+    install_cmd = 'conda'
+    requirements = ['scikit-learn']
+
     parameters = {
         'C': [1e-1, 1, 10],
     }

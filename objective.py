@@ -87,7 +87,9 @@ class Objective(BaseObjective):
         score_train = model.score(self.X_train, self.y_train)
         score_val = model.score(self.X_val, self.y_val)
         score_test = model.score(self.X_test, self.y_test)
-        bl_acc = balanced_accuracy_score(self.y_test, model.predict(self.X_test))
+        bl_acc = balanced_accuracy_score(
+            self.y_test, model.predict(self.X_test)
+        )
         pred = model.predict_proba(self.X_test)
         if len(np.unique(self.y_test)) > 2:
             roc_score = roc_auc_score(self.y_test, pred, multi_class='ovr')

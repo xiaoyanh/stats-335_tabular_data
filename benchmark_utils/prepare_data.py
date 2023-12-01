@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
+#@title Define `prepare_data(X_df, y_df)` function
 def prepare_data(X_df, y_df):
 
   """
@@ -30,6 +31,10 @@ def prepare_data(X_df, y_df):
   Example:
       X, y, obj_type, num_classes = prepare_data(X_df, y_df)
   """
+
+  # Remove rows with NaNs
+  X_df = X_df.dropna()
+  y_df = y_df.loc[X_df.index]
 
   # Convert categorical columns into 0-1 variables
   object_cols = X_df.select_dtypes(include='object').columns

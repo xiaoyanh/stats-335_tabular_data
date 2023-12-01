@@ -19,7 +19,7 @@ class Objective(BaseObjective):
 
     # Name to select the objective in the CLI and to display the results.
     name = "Prediction"
-    url = "https://github.com/tommoral/stats-335_tabular_data"
+    url = "https://github.com/xyhan-github/stats-335_tabular_data"
     parameter_template = "test_size={test_size:.3f}"
 
     is_convex = False

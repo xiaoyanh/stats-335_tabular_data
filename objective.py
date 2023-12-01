@@ -1,4 +1,5 @@
 from benchopt import BaseObjective, safe_import_context
+from IPython import embed
 
 # Protect the import with `safe_import_context()`. This allows:
 # - skipping import to speed up autocompletion in CLI.
@@ -17,7 +18,7 @@ with safe_import_context() as import_ctx:
 class Objective(BaseObjective):
 
     # Name to select the objective in the CLI and to display the results.
-    name = "Classification"
+    name = "Prediction"
     url = "https://github.com/tommoral/stats-335_tabular_data"
     parameter_template = "test_size={test_size:.3f}"
 
@@ -51,13 +52,16 @@ class Objective(BaseObjective):
             construct a `sklearn.Pipeline`.
         """
         rng = np.random.RandomState(self.seed)
+
+        obj_type = self._dataset.obj_type if hasattr(self._dataset, 'obj_type') else None
+
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=self.test_size, random_state=rng,
-            stratify=y
+            stratify=y if obj_type != 'reg' else None # Handles regression case%
         )
         X_train, X_val, y_train, y_val = train_test_split(
             X_train, y_train, test_size=self.test_size,
-            random_state=rng, stratify=y_train
+            random_state=rng, stratify=y_train if obj_type != 'reg' else None # Handles regression case
         )
         self.X_train, self.y_train = X_train, y_train
         self.X_val, self.y_val = X_val, y_val

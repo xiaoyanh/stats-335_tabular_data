@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
 def prepare_data(X_df, y_df):
+
   """
   Preprocesses and prepares the input data and target labels for machine learning tasks.
 
@@ -17,6 +18,7 @@ def prepare_data(X_df, y_df):
                       - 'reg' for regression (numeric target)
                       - 'bin' for binary classification
                       - 'mult' for multiclass classification
+      num_classes (int or None): Number of classes for classification tasks. None for regression.
 
   The function first one-hot encodes categorical columns in X_df, then converts y_df into an appropriate format based on
   its data type:
@@ -26,7 +28,7 @@ def prepare_data(X_df, y_df):
     classification; otherwise, it's multiclass classification.
 
   Example:
-      X, y, obj_type = prepare_data(X_df, y_df)
+      X, y, obj_type, num_classes = prepare_data(X_df, y_df)
   """
 
   # Convert categorical columns into 0-1 variables
@@ -43,6 +45,7 @@ def prepare_data(X_df, y_df):
   if np.issubdtype(y_array.dtype, np.number):
       y = y_array
       obj_type = 'reg'
+      num_classes = None
   else:
       # If y is categorical (including strings), use LabelEncoder for encoding
       encoder = LabelEncoder()
@@ -50,4 +53,4 @@ def prepare_data(X_df, y_df):
       num_classes = len(encoder.classes_)
       obj_type = 'bin' if num_classes == 2 else 'mult'
 
-  return X, y, obj_type
+  return X, y, obj_type, num_classes

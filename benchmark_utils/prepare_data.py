@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
 #@title Define `prepare_data(X_df, y_df)` function

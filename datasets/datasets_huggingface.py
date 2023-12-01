@@ -7,7 +7,7 @@ with safe_import_context() as import_ctx:
 
 class Dataset(BaseDataset):
 
-    name = 'openml'
+    name = 'huggingface'
 
     install_cmd = 'conda'
     requirements = ["pip:datasets","pandas"]

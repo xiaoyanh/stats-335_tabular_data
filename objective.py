@@ -53,15 +53,15 @@ class Objective(BaseObjective):
         """
         rng = np.random.RandomState(self.seed)
 
-        obj_type = self._dataset.obj_type if hasattr(self._dataset, 'obj_type') else None
+        self.obj_type = self._dataset.obj_type if hasattr(self._dataset, 'obj_type') else 'bin'
 
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=self.test_size, random_state=rng,
-            stratify=y if obj_type != 'reg' else None # Handles regression case%
+            stratify=y if self.obj_type != 'reg' else None # Handles regression case%
         )
         X_train, X_val, y_train, y_val = train_test_split(
             X_train, y_train, test_size=self.test_size,
-            random_state=rng, stratify=y_train if obj_type != 'reg' else None # Handles regression case
+            random_state=rng, stratify=y_train if self.obj_type != 'reg' else None # Handles regression case
         )
         self.X_train, self.y_train = X_train, y_train
         self.X_val, self.y_val = X_val, y_val
@@ -91,25 +91,32 @@ class Objective(BaseObjective):
         score_train = model.score(self.X_train, self.y_train)
         score_val = model.score(self.X_val, self.y_val)
         score_test = model.score(self.X_test, self.y_test)
-        bl_acc = balanced_accuracy_score(
-            self.y_test, model.predict(self.X_test)
-        )
-        pred = model.predict_proba(self.X_test)
-        if len(np.unique(self.y_test)) > 2:
-            roc_score = roc_auc_score(self.y_test, pred, multi_class='ovr')
-        else:
-            roc_score = roc_auc_score(self.y_test, pred[:, 1])
+
+        if self.obj_type != 'reg':
+            bl_acc = balanced_accuracy_score(
+                self.y_test, model.predict(self.X_test)
+            )
+
+            pred = model.predict_proba(self.X_test)
+            if len(np.unique(self.y_test)) > 2:
+                roc_score = roc_auc_score(self.y_test, pred, multi_class='ovr')
+            else:
+                roc_score = roc_auc_score(self.y_test, pred[:, 1])
 
         # This method can return many metrics in a dictionary. One of these
         # metrics needs to be `value` for convergence detection purposes.
-        return dict(
+        result =  dict(
             score_test=score_test,
             score_val=score_val,
             score_train=score_train,
-            balanced_accuracy=bl_acc,
-            roc_auc_score=roc_score,
             value=1-score_test
         )
+
+        if self.obj_type != 'reg':
+            result['balanced_accuracy'] = bl_acc
+            result['roc_auc_score'] = roc_score
+
+        return result
 
     def get_one_result(self):
         # Return one solution. The return value should be an object compatible

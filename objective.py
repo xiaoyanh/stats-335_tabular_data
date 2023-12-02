@@ -39,7 +39,7 @@ class Objective(BaseObjective):
     # Bump it up if the benchmark depends on a new feature of benchopt.
     min_benchopt_version = "1.5"
 
-    def set_data(self, X, y, preprocessor=None):
+    def set_data(self, X, y, preprocessor=None, prob_type = 'bin', num_classes = 2):
         """Set the data to be used to evaluate the ML algorithms.
 
         Parameters
@@ -50,12 +50,13 @@ class Objective(BaseObjective):
             A transformer to preprocess the data before fitting the model.
             This part will be passed to the solver as is, and will be used to
             construct a `sklearn.Pipeline`.
+        prob_type : str, 'bin', 'mult', or 'reg'
+            The type of problem: binary classification, multiclass
+            classification, or regression.
+        num_classes : int
+            The number of classes in the dataset. This is only used for classification.
         """
         rng = np.random.RandomState(self.seed)
-
-        # Gets the type of problem (bin, reg, or mult)
-        # This defaults to binary if not specified in self._dataset
-        self.obj_type = self._dataset.obj_type if hasattr(self._dataset, 'obj_type') else 'bin'
 
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=self.test_size, random_state=rng,
@@ -69,6 +70,8 @@ class Objective(BaseObjective):
         self.X_val, self.y_val = X_val, y_val
         self.X_test, self.y_test = X_test, y_test
         self.preprocessor = preprocessor
+        self.prob_type    = prob_type
+        self.num_classes  = num_classes
 
     def evaluate_result(self, model):
         """Evaluate a fitted model on the test set.
@@ -95,7 +98,7 @@ class Objective(BaseObjective):
         score_test = model.score(self.X_test, self.y_test)
 
         # Only calculate accuracy and ROC scores if classification (not regression)
-        if self.obj_type != 'reg':
+        if self.prob_type != 'reg':
             bl_acc = balanced_accuracy_score(
                 self.y_test, model.predict(self.X_test)
             )
@@ -142,5 +145,7 @@ class Objective(BaseObjective):
         return dict(
             X_train=self.X_train,
             y_train=self.y_train,
-            preprocessor=self.preprocessor
+            preprocessor=self.preprocessor,
+            prob_type=self.prob_type,
+            num_classes=self.num_classes,
         )

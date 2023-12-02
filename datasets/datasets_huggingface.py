@@ -43,12 +43,12 @@ class Dataset(BaseDataset):
             raise Exception("Invalid Dataset Name!")
 
         # Prepare the data
-        X, y, obj_type, num_classes = prepare_data(X_df, y_df)
+        X, y, prob_type, num_classes = prepare_data(X_df, y_df)
 
         return dict(
             X=X,
             y=y,
-            preprocessor=None
+            preprocessor=None,
             prob_type = prob_type,
             num_classes = num_classes,
         )

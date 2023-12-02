@@ -53,6 +53,8 @@ class Objective(BaseObjective):
         """
         rng = np.random.RandomState(self.seed)
 
+        # Gets the type of problem (bin, reg, or mult)
+        # This defaults to binary if not specified in self._dataset
         self.obj_type = self._dataset.obj_type if hasattr(self._dataset, 'obj_type') else 'bin'
 
         X_train, X_test, y_train, y_test = train_test_split(
@@ -92,6 +94,7 @@ class Objective(BaseObjective):
         score_val = model.score(self.X_val, self.y_val)
         score_test = model.score(self.X_test, self.y_test)
 
+        # Only calculate accuracy and ROC scores if classification (not regression)
         if self.obj_type != 'reg':
             bl_acc = balanced_accuracy_score(
                 self.y_test, model.predict(self.X_test)
@@ -112,6 +115,7 @@ class Objective(BaseObjective):
             value=1-score_test
         )
 
+        # Only save accuracy and ROC scores if classification (not regression)
         if self.obj_type != 'reg':
             result['balanced_accuracy'] = bl_acc
             result['roc_auc_score'] = roc_score

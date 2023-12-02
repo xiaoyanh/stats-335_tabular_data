@@ -58,6 +58,8 @@ class Objective(BaseObjective):
         """
         rng = np.random.RandomState(self.seed)
 
+        self.prob_type = prob_type
+
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=self.test_size, random_state=rng,
             stratify=y if self.prob_type != 'reg' else None # Stratify if classification; don't if regression
@@ -70,7 +72,6 @@ class Objective(BaseObjective):
         self.X_val, self.y_val = X_val, y_val
         self.X_test, self.y_test = X_test, y_test
         self.preprocessor = preprocessor
-        self.prob_type    = prob_type
         self.num_classes  = num_classes
 
     def evaluate_result(self, model):
@@ -119,7 +120,7 @@ class Objective(BaseObjective):
         )
 
         # Only save accuracy and ROC scores if classification (not regression)
-        if self.obj_type != 'reg':
+        if self.prob_type != 'reg':
             result['balanced_accuracy'] = bl_acc
             result['roc_auc_score'] = roc_score
 

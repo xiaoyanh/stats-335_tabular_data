@@ -60,11 +60,11 @@ class Objective(BaseObjective):
 
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=self.test_size, random_state=rng,
-            stratify=y if self.obj_type != 'reg' else None # Stratify if classification; don't if regression
+            stratify=y if self.prob_type != 'reg' else None # Stratify if classification; don't if regression
         )
         X_train, X_val, y_train, y_val = train_test_split(
             X_train, y_train, test_size=self.test_size,
-            random_state=rng, stratify=y_train if self.obj_type != 'reg' else None # Stratify if classification; don't if regression
+            random_state=rng, stratify=y_train if self.prob_type != 'reg' else None # Stratify if classification; don't if regression
         )
         self.X_train, self.y_train = X_train, y_train
         self.X_val, self.y_val = X_val, y_val
